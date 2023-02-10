@@ -1,0 +1,211 @@
+package co.tiagoaguiar.course.instagram.main.view
+
+import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.view.WindowInsetsController
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import co.tiagoaguiar.course.instagram.R
+import co.tiagoaguiar.course.instagram.post.view.AddFragment
+import co.tiagoaguiar.course.instagram.common.extension.replaceFragment
+import co.tiagoaguiar.course.instagram.databinding.ActivityMainBinding
+import co.tiagoaguiar.course.instagram.home.view.HomeFragment
+import co.tiagoaguiar.course.instagram.profile.view.ProfileFragment
+import co.tiagoaguiar.course.instagram.search.view.SearchFragment
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
+AddFragment.AddListener,
+SearchFragment.SearchListener {
+
+    private lateinit var binding: ActivityMainBinding
+
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var searchFragment: Fragment
+    private lateinit var addFragment: Fragment
+    private lateinit var profileFragment: ProfileFragment
+
+    private var currentFragment: Fragment? = null
+
+  //  private lateinit var fragmentSavedState: HashMap<String, Fragment.SavedState?>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+
+        setContentView(binding.root)
+
+        //trocar tema do icone do status bar
+        //VERSÕES MAIS NOVAS DO SDK
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+            //trocar a cor do status bar
+            window.statusBarColor = ContextCompat.getColor(this, R.color.gray)
+        }
+
+        //val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
+        //ira escutar o evento de acao dos icones do TOOLBAR
+        setSupportActionBar(binding.mainToolbar)  //-- não usar no modo escuro
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_insta_camera)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // se tornará clicavel
+        supportActionBar?.title = ""
+
+//
+//        if (savedInstanceState == null) {
+//            fragmentSavedState = HashMap()
+//        } else {
+//            savedInstanceState.getSerializable("fragmentState") as HashMap<String, Fragment.SavedState?>
+//        }
+
+
+        //instancia do fragments
+        homeFragment = HomeFragment()
+        searchFragment = SearchFragment()
+        addFragment = AddFragment()
+        profileFragment = ProfileFragment()
+
+
+        //Versão 1
+        //iremos adicionar todos os fragmentos e escolher apenas os que queremos
+        //vamos empilhar os fragmentos
+//            currentFragment = homeFragment
+//
+//        supportFragmentManager.beginTransaction().apply {
+//            add(R.id.main_fragment, profileFragment, "3").hide(profileFragment)
+//            add(R.id.main_fragment, cameraFragment, "2").hide(cameraFragment)
+//            add(R.id.main_fragment, searchFragment, "1").hide(searchFragment)
+//            add(R.id.main_fragment, homeFragment, "0")
+//            commit()
+//        }
+
+    //    currentFragment = homeFragment
+
+        //inflar o layout do menu home
+        binding.mainBottomNav.setOnNavigationItemSelectedListener(this)
+        binding.mainBottomNav.selectedItemId = R.id.menu_bottom_home
+
+    }
+
+    override fun goToProfile(uuid: String) {
+        val fragment = ProfileFragment().apply {
+            arguments = Bundle().apply {
+                putString(ProfileFragment.KEY_USER_ID, uuid)
+            }
+        }
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.main_fragment, fragment, fragment.javaClass.simpleName + "detail")
+            addToBackStack(null)
+            commit()
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        var scrollToolbarEnabled = false
+
+        //V2
+//        val newFrag: Fragment? = when (item.itemId) {
+//            R.id.menu_bottom_home -> HomeFragment()
+//            R.id.menu_bottom_search -> SearchFragment()
+//            R.id.menu_bottom_add -> CameraFragment()
+//            R.id.menu_bottom_profile -> ProfileFragment()
+//            else -> null
+//        }
+//
+//        val currFragment = supportFragmentManager.findFragmentById(R.id.main_fragment)
+//
+//        val fragmentTag = newFrag?.javaClass?.simpleName
+//
+//        if (!currFragment?.tag.equals(fragmentTag)) {
+//            currFragment?.let { frag ->
+//                fragmentSavedState.put(
+//                    frag.tag!!,
+//                    supportFragmentManager.saveFragmentInstanceState(frag)
+//                )
+//            }
+//        }
+//
+//        newFrag?.setInitialSavedState(fragmentSavedState[fragmentTag])
+//        newFrag?.let {
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.main_fragment, it, fragmentTag)
+//                .addToBackStack(fragmentTag)
+//                .commit()
+//        }
+
+        //v1
+        //trocar o fragment baseado no id
+        when(item.itemId) {
+            R.id.menu_bottom_home -> {
+                if (currentFragment == homeFragment) return false // para não chamar o mesmo activity varias vezes
+                currentFragment = homeFragment
+            }
+            R.id.menu_bottom_search -> {
+                if (currentFragment == searchFragment) return false
+                currentFragment = searchFragment
+                scrollToolbarEnabled = false // o scroll não será ativa apenas neste fragment
+            }
+            R.id.menu_bottom_add -> {
+                if (currentFragment == addFragment) return false
+                currentFragment = addFragment
+                scrollToolbarEnabled = false // o scroll não será ativa apenas neste fragment
+            }
+            R.id.menu_bottom_profile -> {
+                if (currentFragment == profileFragment) return false
+                currentFragment = profileFragment
+               scrollToolbarEnabled = true // o scroll será ativa apenas neste fragment
+            }
+        }
+
+        setScrollToolbarEnabled(scrollToolbarEnabled)
+
+        currentFragment?.let {
+            //tirar o fragmento em branco quando clica em voltar
+            replaceFragment(R.id.main_fragment, it)
+        }
+        return true
+    }
+
+
+    private fun setScrollToolbarEnabled(enabled: Boolean) {
+        val params = binding.mainToolbar.layoutParams as AppBarLayout.LayoutParams
+        var coordinatorParams = binding.mainAppbar.layoutParams as CoordinatorLayout.LayoutParams
+
+        //ira ativar a rolagem
+        if (enabled) {
+            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+            coordinatorParams.behavior = AppBarLayout.Behavior() // irá o comportamento do appbar
+        } else {
+            params.scrollFlags = 0
+            coordinatorParams.behavior = null
+        }
+        binding.mainAppbar.layoutParams = coordinatorParams
+    }
+
+
+    override fun onPostCreated() {
+        //irá limpar o cache
+       homeFragment.presenter.clear()
+
+        if (supportFragmentManager.findFragmentByTag(
+            profileFragment.javaClass.simpleName) != null)
+            profileFragment.presenter.clear()
+              //TODO: profile presenter clear
+
+        //ira chamar a tela principal
+       binding.mainBottomNav.selectedItemId = R.id.menu_bottom_home
+    }
+
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        outState.putSerializable("fragmentState", fragmentSavedState)
+//        super.onSaveInstanceState(outState)
+//    }
+}

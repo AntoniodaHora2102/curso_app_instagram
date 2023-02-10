@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "435447706265",
+    "project_id": "instagramkotlin-f0cc4",
+    "storage_bucket": "instagramkotlin-f0cc4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435447706265:android:d1e164f4fbd562a6affe08",
+        "android_client_info": {
+          "package_name": "co.tiagoaguiar.course.instagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435447706265-7u1j61724a27c23m4ltanubnignu134k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlAeCeRz85cKgkrP0jBwYKXFAGibUq33w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "435447706265-7u1j61724a27c23m4ltanubnignu134k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

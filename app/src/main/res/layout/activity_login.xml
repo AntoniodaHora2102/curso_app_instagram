@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/white">
+
+    <!-- Envelopamos todos os components INPUTS e BUTTON -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/login_img_logo"
+                android:layout_marginBottom="48dp"
+                android:src="@drawable/instagram_logo_black"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:contentDescription="@null" />
+
+            <!-- Irá preparar os campos para a validação-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/login_edit_email_input"
+                app:hintEnabled="false"
+                style="@style/Theme.Instagram.FormEditTextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_edit_email"
+                    style="@style/Theme.Instagram.FormEditText"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:autofillHints="@null" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/login_edit_password_input"
+                app:hintEnabled="false"
+                style="@style/Theme.Instagram.FormEditTextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_edit_password"
+                    style="@style/Theme.Instagram.FormEditText"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:autofillHints="@null" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- BUTTON que dar acesso ao login com as informações correta -->
+            <co.tiagoaguiar.course.instagram.common.view.LoadingButton
+                android:id="@+id/login_btn_enter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:text="@string/enter"
+                />
+
+            <FrameLayout
+                style="@style/Theme.Instagram.FormContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:background="@color/gray_border"
+                    android:layout_height="1dp"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    />
+
+                <TextView
+                   style="@style/Theme.Instagram.TextViewBase"
+                    android:background="@color/white"
+                    android:layout_gravity="center"
+                    android:text="@string/or"
+                    android:padding="8dp"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Cria a borda acima do TextView ACCOUNT-->
+    <View
+        android:background="@color/gray_darker"
+        android:layout_width="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/login_txt_register"
+        android:layout_height="1dp"
+        />
+
+    <TextView
+        android:text="@string/does_not_have_account"
+        android:id="@+id/login_txt_register"
+        android:textColor="@color/black"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+
+        android:background="@color/white"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:padding="24dp"
+
+        style="@style/Theme.Instagram.TextViewBase"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

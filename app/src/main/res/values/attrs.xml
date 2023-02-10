@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Declaracao de customizacao (style) para a class LOADING_BUTTON -->
+    <declare-styleable name="LoadingButton">
+        <attr name="text" format="string"></attr>
+    </declare-styleable>
+
+
+</resources>

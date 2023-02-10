@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Component Pai-->
+    <style name="Theme.Instagram.FormContainer">
+        <item name="android:layout_marginStart">36dp</item>
+        <item name="android:layout_marginEnd">36dp</item>
+    </style>
+
+
+    <!-- Estilo de formulário tela de Login APP INSTAGRAM || Herdando do TEXT INPUT LAYOUT-->
+    <style name="Theme.Instagram.FormEditText" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:background">@drawable/edit_text_background</item>
+    </style>
+
+    <!-- Estilo do TEXT INPUT LAYOUT-->
+    <style name="Theme.Instagram.FormEditTextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">36dp</item>
+        <item name="android:layout_marginEnd">36dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+    </style>
+
+
+    <!-- Estilo de Button -->
+    <style name="Theme.Instagram.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white</item>
+
+        <item name="android:layout_marginStart">36dp</item>
+        <item name="android:layout_marginEnd">36dp</item>
+
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_marginBottom">24dp</item>
+
+        <!-- irá realizar a transição do button quando estiver disabled ou enabled -->
+        <item name="backgroundTint">@color/button_background</item>
+    </style>
+
+
+
+    <!-- Estilo TextView -->
+    <style name="Theme.Instagram.TextViewBase" parent="Theme.Instagram.FormContainer">
+        <item name="android:textColor">@color/gray_text</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <!-- Herdando as caractiristicas do TEXTVIEWBASE-->
+    <style name="Theme.Instagram.TextViewBase.Form" >
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_marginBottom">24dp</item>
+    </style>
+
+    <!--BUTTON LINK JUMP(PULAR) | BUTTON não terá borda e nem cor por isso herdamos do BORDERLESS -->
+    <style name="Theme.Instagram.Link" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/bleu_enabled</item>
+    </style>
+
+    <!-- TextView tela de Usuário -->
+    <style name="Theme.Instagram.TextViewProfile">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <!-- BUTTON DA TELA DE USUÁRIO - EDITAR USUÁRIO -->
+    <style name="Theme.Instagram.Button.White" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/black</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <!-- imageView POST INSTAGRAM -->
+    <style name="Theme.Instagram.Icon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">16dp</item>
+
+    </style>
+</resources>
