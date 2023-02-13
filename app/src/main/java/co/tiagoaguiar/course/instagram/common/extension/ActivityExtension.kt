@@ -34,7 +34,7 @@ fun Activity.hideKeyboard() {
 }
 
 fun AppCompatActivity.replaceFragment(@IdRes id: Int, fragment: Fragment) {
-    if (supportFragmentManager.findFragmentById(R.id.main_fragment) == null) {
+    if (supportFragmentManager.findFragmentById(id) == null) {
         supportFragmentManager.beginTransaction().apply {
             add(id, fragment,  fragment.javaClass.simpleName)
             commit()
