@@ -128,12 +128,6 @@ class RegisterPhotoFragment : Fragment(R.layout.fragment_register_photo), Regist
             }
         }
 
-        //adicionando a funcao do BUTTON
-//        customDialog.addButton({
-//            Log.i("TESTE", (it as TextView).text.toString())
-//        }, R.string.photo, R.string.gallery)
-
-        //ira exibir fragment DIALOG
         customDialog.show()
     }
 
