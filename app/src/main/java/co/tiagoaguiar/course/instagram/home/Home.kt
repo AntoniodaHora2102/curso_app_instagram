@@ -8,6 +8,7 @@ interface Home {
 
     interface Presenter : BasePresenter {
         fun fetchFeed()
+        fun logout() // logout
         fun clear() // limpar o cache
     }
 

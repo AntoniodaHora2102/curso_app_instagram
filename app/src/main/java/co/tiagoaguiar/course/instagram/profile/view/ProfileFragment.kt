@@ -1,5 +1,6 @@
 package co.tiagoaguiar.course.instagram.profile.view
 
+import android.content.Context
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -12,6 +13,7 @@ import co.tiagoaguiar.course.instagram.common.model.Post
 import co.tiagoaguiar.course.instagram.common.model.User
 import co.tiagoaguiar.course.instagram.common.model.UserAuth
 import co.tiagoaguiar.course.instagram.databinding.FragmentProfileBinding
+import co.tiagoaguiar.course.instagram.main.LogoutListener
 import co.tiagoaguiar.course.instagram.profile.Profile
 import co.tiagoaguiar.course.instagram.profile.presenter.ProfilePresenter
 import com.bumptech.glide.Glide
@@ -26,44 +28,18 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, Profile.Presenter>
     private val adapter = PostAdapter()
     private var uuid: String? = null
 
-    //v3
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        presenter.subscribe(
-//            if (savedInstanceState != null) {
-//                ProfileState(
-//                    (savedInstanceState.getParcelableArray("posts") as Array<Post>).toList(),
-//                    savedInstanceState.getParcelable("user")
-//                )
-//            } else {
-//                null
-//            }
-//        )
-//    }
+    private var logoutListener: LogoutListener? = null
+    private var followListener: FollowListener? = null
 
-
-    //ao usarmos a class Base Fragment não necessitamos maos do onCreateView
-//    override fun onCreateView( inflater: LayoutInflater, container:
-//    ViewGroup?, savedInstanceState: Bundle?): View? {
-//        return inflater.inflate(R.layout.fragment_profile, container, false)
-//    }
-
-    /* Metodo transferido para a Class BASEFRAGNENT
-    * Class Generica
-    */
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-////        val rv = view.findViewById<RecyclerView>(R.id.profile_rv)
-//        binding = FragmentProfileBinding.bind(view)
-//
-//        //irá inflar o layout GRID com 3 colunas
-////        rv.layoutManager = GridLayoutManager(requireContext(), 3) // quantidade de grids que iremos trabalhar
-////        rv.adapter = PostAdapter()
-//        binding?.profileRv?.layoutManager = GridLayoutManager(requireContext(), 3) // quantidade de grids que iremos trabalhar
-//        binding?.profileRv?.adapter = PostAdapter()
-//
-//    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is LogoutListener) {
+            logoutListener = context
+        }
+        if (context is FollowListener) {
+            followListener = context
+        }
+    }
 
     override fun setupViews() {
         uuid = arguments?.getString(KEY_USER_ID)
@@ -98,22 +74,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, Profile.Presenter>
         val repository = DependencyInjector.profileRepository()
         presenter = ProfilePresenter(this, repository)
     }
-
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        if (savedInstanceState != null) {
-//            val state = savedInstanceState.getParcelable<UserAuth>("myState")
-//            state?.let {
-//                displayUserProfile(it)
-//            }
-//        }
-//        super.onViewStateRestored(savedInstanceState)
-//    }
-
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        outState.putParcelable("user", presenter.getState().fetchUserProfile())
-//        outState.putParcelableArray("posts", presenter.getState().fetchUserPosts()?.toTypedArray())
-//        super.onSaveInstanceState(outState)
-//    }
 
     override fun showProgress(enabled: Boolean) {
         binding?.profileProgress?.visibility = if (enabled) View.VISIBLE else View.GONE
@@ -159,6 +119,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, Profile.Presenter>
        binding?.profileRv?.visibility = View.GONE
     }
 
+    //update da pagina
+    override fun followUpdated() {
+        followListener?.followUpdated()
+    }
+
     override fun displayFullPosts(posts: List<Post>) {
         binding?.profileTxtEmpty?.visibility = View.GONE
         binding?.profileRv?.visibility = View.VISIBLE
@@ -166,26 +131,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, Profile.Presenter>
         adapter.items = posts
         adapter.notifyDataSetChanged()
     }
-
-    //    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//
-//        //este fragmento ficara responsável pelo opçao do menu
-//        setHasOptionsMenu(true)
-//    }
-
-//    override fun onDestroy() {
-//        binding = null
-//        //presenter.onDestroy
-//        super.onDestroy()
-//    }
-
-
-    //iremos inflar a opção Menu do Fragmento
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.menu_profile, menu)
-//        super.onCreateOptionsMenu(menu, inflater)
-//    }
 
 
     //iremos inflar a opção Menu do Fragmento - generica BaseFragment
@@ -209,39 +154,23 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, Profile.Presenter>
         return true
     }
 
+    //metodo de logout
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.menu_logout -> {
+                logoutListener?.logout()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    interface FollowListener {
+        fun followUpdated()
+    }
+
     companion object {
         const val KEY_USER_ID = "key_user_id"
     }
-
-
-
-//    //ADAPTER do layout GRID - class PosAdapter
-//    private class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
-//
-//        //layout que será criado
-//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-//         return PostViewHolder(
-//             LayoutInflater.from(parent.context).inflate(R.layout.item_profile_grid , parent, false)
-//         )
-//        }
-//
-//        // irá devolver a posição toda vez que realizamos a rolagem na tela - lista dinâmica
-//        override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-//            holder.bind(R.drawable.ic_insta_add)
-//        }
-//
-//        //quantidade de itens na tela
-//        override fun getItemCount(): Int {
-//           return 30
-//        }
-//
-//        private  class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//            //metodo BIND
-//            fun bind(image: Int) {
-//                itemView.findViewById<ImageView>(R.id.item_profile_img_grid).setImageResource(image)
-//            }
-//        }
-//
-//    }
 
 }

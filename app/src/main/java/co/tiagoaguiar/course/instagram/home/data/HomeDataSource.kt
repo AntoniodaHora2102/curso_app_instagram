@@ -7,6 +7,9 @@ import java.lang.UnsupportedOperationException
 
 interface HomeDataSource {
 
+    // fun de logout
+    fun logout() {throw UnsupportedOperationException()}
+
     //busca da lista de post
     fun fetchFeed(userUUID: String,callback: RequestCallback<List<Post>>)
 

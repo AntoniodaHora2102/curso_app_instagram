@@ -110,7 +110,11 @@ class FireProfileDataSource : ProfileDataSource {
                 else FieldValue.arrayRemove(uid) // removendo o user
             )
             .addOnSuccessListener { res ->
-                callback.onSucess(true)
+
+                followingCounter(uid, isFollow) // contador de seguidores
+                followersCounter(userUUID, callback) // contadores de seguindo
+
+                updateFeed(userUUID, isFollow) // atualizar e remover os feeds do user
             }
             .addOnFailureListener { exception ->
 
@@ -129,7 +133,11 @@ class FireProfileDataSource : ProfileDataSource {
                             )
                         )
                         .addOnSuccessListener { res ->
-                            callback.onSucess(true)
+
+                            followingCounter(uid, isFollow) // contador de seguidores
+                            followersCounter(userUUID, callback) // contadores de seguindo
+
+                            updateFeed(userUUID, isFollow) // atualizar e remover os feeds do user
                         }
                         .addOnFailureListener { exception ->
                             callback.onFailure(exception.message ?: "Falha ao criar seguidor")
@@ -143,5 +151,81 @@ class FireProfileDataSource : ProfileDataSource {
             }
     }
 
+    //contador de seguidores
+    private fun followingCounter(uid: String, isFollow: Boolean) {
 
+        // referencia do user logado
+        val meRef = FirebaseFirestore.getInstance()
+            .collection("/users")
+            .document(uid)
+
+        //começou a seguir aumentará um
+        if (isFollow) meRef.update("following", FieldValue.increment(1))
+
+        //deixou de seguir
+        else meRef.update("following", FieldValue.increment(-1))
+    }
+
+    //contador de seguindo
+    private fun followersCounter(uid: String, callback: RequestCallback<Boolean>) {
+
+        // referencia do user logado
+        val meRef = FirebaseFirestore.getInstance()
+            .collection("/users")
+            .document(uid)
+
+        // contador de seguidores
+        FirebaseFirestore.getInstance()
+            .collection("/followers")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { response ->
+                if (response.exists()) {
+                    val list = response.get("followers") as List<String>
+                    meRef.update("followers", list.size)
+                }
+                callback.onSucess(true)
+            }
+    }
+
+    //funcao de adicionar e remover o feed do user
+    //quando o user começa a seguir ou deixar
+    private fun updateFeed(uid: String, isFollow: Boolean) {
+
+        if (!isFollow) {
+            //remover do feed
+            FirebaseFirestore.getInstance()
+                .collection("/feeds")
+                .document(FirebaseAuth.getInstance().uid!!) // id logado
+                .collection("posts") // meu feed / posts
+                .whereEqualTo("publisher.uuid", uid) // feed do seguidor
+                .get()
+                .addOnSuccessListener { res ->
+                    val documents = res.documents
+                    for(document in documents) {
+                        document.reference.delete() // exclui o post
+                    }
+                }
+        } else {
+            //adicionar do feed
+            FirebaseFirestore.getInstance()
+                .collection("/posts")
+                .document(uid)
+                .collection("posts")
+                .get()
+                .addOnSuccessListener { res ->
+                    val posts = res.toObjects(Post::class.java)
+
+                    posts.lastOrNull()?.let {
+                        FirebaseFirestore.getInstance()
+                            .collection("/feeds")
+                            .document(FirebaseAuth.getInstance().uid!!)
+                            .collection("posts")
+                            .document(it.uuid!!)
+                            .set(it)
+                    }
+                }
+
+        }
+    }
 }

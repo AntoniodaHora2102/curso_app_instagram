@@ -41,6 +41,10 @@ class HomePresenter(
         })
     }
 
+    //logout
+    override fun logout() {
+        repository.logout()
+    }
 
     override fun onDestroy() {
        view = null

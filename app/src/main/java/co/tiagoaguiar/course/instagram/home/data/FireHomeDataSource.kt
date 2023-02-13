@@ -38,4 +38,9 @@ class FireHomeDataSource : HomeDataSource {
                 callback.onComplete()
             }
     }
+
+    //funcao logout
+    override fun logout() {
+        FirebaseAuth.getInstance().signOut()
+    }
 }

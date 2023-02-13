@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="@color/white">
+    android:background="?colorOnPrimary">
 
     <!-- Envelopamos todos os components INPUTS e BUTTON -->
     <ScrollView
@@ -82,7 +82,7 @@
 
                 <TextView
                    style="@style/Theme.Instagram.TextViewBase"
-                    android:background="@color/white"
+                    android:background="?colorOnPrimary"
                     android:layout_gravity="center"
                     android:text="@string/or"
                     android:padding="8dp"
@@ -106,7 +106,7 @@
     <TextView
         android:text="@string/does_not_have_account"
         android:id="@+id/login_txt_register"
-        android:textColor="@color/black"
+        android:textColor="?colorPrimary"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +114,7 @@
         android:layout_width="match_parent"
         android:textAlignment="center"
 
-        android:background="@color/white"
+        android:background="?colorOnPrimary"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:padding="24dp"

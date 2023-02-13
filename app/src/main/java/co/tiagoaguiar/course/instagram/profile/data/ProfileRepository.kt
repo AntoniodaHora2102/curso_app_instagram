@@ -64,7 +64,7 @@ class ProfileRepository (private val dataSourceFactory: ProfileDataSourceFactory
         })
     }
 
-    fun follower(uuid: String?, follow: Boolean, callback: RequestCallback<Boolean>) {
+    fun followUser(uuid: String?, follow: Boolean, callback: RequestCallback<Boolean>) {
         val localDataSource = dataSourceFactory.createLocalDataSource()
         val userId = uuid ?: localDataSource.fetchSession()
 

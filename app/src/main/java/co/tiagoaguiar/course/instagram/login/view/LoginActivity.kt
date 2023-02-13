@@ -1,11 +1,19 @@
 package co.tiagoaguiar.course.instagram.login.view
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import co.tiagoaguiar.course.instagram.R
 import co.tiagoaguiar.course.instagram.common.base.DependencyInjector
 import co.tiagoaguiar.course.instagram.common.model.Database
 import co.tiagoaguiar.course.instagram.common.util.TxtWatcher
@@ -41,6 +49,15 @@ class LoginActivity : AppCompatActivity(), Login.View {
       //para deixa o codigo para enxuto vamos utilizar o WITH
       //não será mais necessário repetir o binding, quando houver mais de um input ou button
       with(binding) {
+              when(resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+
+                  Configuration.UI_MODE_NIGHT_YES -> {
+                     loginImgLogo.imageTintList = ColorStateList.valueOf(Color.WHITE)
+                  }
+                  Configuration.UI_MODE_NIGHT_NO -> {
+                  }
+              }
+
 
         //com o viewBinding não se faz mais necessário essa chamada
   //    val editTextEmail = findViewById<TextInputEditText>(R.id.login_edit_email)

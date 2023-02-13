@@ -1,5 +1,9 @@
 package co.tiagoaguiar.course.instagram.main.view
 
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,14 +18,18 @@ import co.tiagoaguiar.course.instagram.post.view.AddFragment
 import co.tiagoaguiar.course.instagram.common.extension.replaceFragment
 import co.tiagoaguiar.course.instagram.databinding.ActivityMainBinding
 import co.tiagoaguiar.course.instagram.home.view.HomeFragment
+import co.tiagoaguiar.course.instagram.main.LogoutListener
 import co.tiagoaguiar.course.instagram.profile.view.ProfileFragment
 import co.tiagoaguiar.course.instagram.search.view.SearchFragment
+import co.tiagoaguiar.course.instagram.splash.view.SplashActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
 AddFragment.AddListener,
-SearchFragment.SearchListener {
+SearchFragment.SearchListener,
+ProfileFragment.FollowListener,
+LogoutListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -44,12 +52,31 @@ SearchFragment.SearchListener {
         //trocar tema do icone do status bar
         //VERSÕES MAIS NOVAS DO SDK
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.setSystemBarsAppearance(
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
-            //trocar a cor do status bar
-            window.statusBarColor = ContextCompat.getColor(this, R.color.gray)
+
+                when(resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+                    }
+                    Configuration.UI_MODE_NIGHT_NO -> {
+
+                        window.insetsController?.setSystemBarsAppearance(
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        )
+
+                        //trocar a cor do status bar
+                        window.statusBarColor = ContextCompat.getColor(this, R.color.gray)
+                    }
+                }
+            }
+
+        // configurar a cor do TEMA ESCURO / TEM CLARO
+        if (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES) {
+            binding.mainImgLogo.imageTintList = ColorStateList.valueOf(Color.WHITE)
+        } else {
+            binding.mainImgLogo.imageTintList = ColorStateList.valueOf(Color.BLACK)
         }
 
         //val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
@@ -59,35 +86,12 @@ SearchFragment.SearchListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // se tornará clicavel
         supportActionBar?.title = ""
 
-//
-//        if (savedInstanceState == null) {
-//            fragmentSavedState = HashMap()
-//        } else {
-//            savedInstanceState.getSerializable("fragmentState") as HashMap<String, Fragment.SavedState?>
-//        }
-
 
         //instancia do fragments
         homeFragment = HomeFragment()
         searchFragment = SearchFragment()
         addFragment = AddFragment()
         profileFragment = ProfileFragment()
-
-
-        //Versão 1
-        //iremos adicionar todos os fragmentos e escolher apenas os que queremos
-        //vamos empilhar os fragmentos
-//            currentFragment = homeFragment
-//
-//        supportFragmentManager.beginTransaction().apply {
-//            add(R.id.main_fragment, profileFragment, "3").hide(profileFragment)
-//            add(R.id.main_fragment, cameraFragment, "2").hide(cameraFragment)
-//            add(R.id.main_fragment, searchFragment, "1").hide(searchFragment)
-//            add(R.id.main_fragment, homeFragment, "0")
-//            commit()
-//        }
-
-    //    currentFragment = homeFragment
 
         //inflar o layout do menu home
         binding.mainBottomNav.setOnNavigationItemSelectedListener(this)
@@ -108,40 +112,39 @@ SearchFragment.SearchListener {
         }
     }
 
+    override fun followUpdated() {
+        homeFragment.presenter.clear()
+
+        if (supportFragmentManager.findFragmentByTag(
+                profileFragment.javaClass.simpleName) != null) {
+            profileFragment.presenter.clear()
+        }
+    }
+
+    //funcao logout
+    override fun logout() {
+
+        if (supportFragmentManager.findFragmentByTag(
+                profileFragment.javaClass.simpleName) != null) {
+            profileFragment.presenter.clear()
+        }
+
+        homeFragment.presenter.clear()
+        homeFragment.presenter.logout()
+
+
+        val intent = Intent(baseContext, SplashActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out) // para não pular tanto activity no momento transição
+
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var scrollToolbarEnabled = false
 
-        //V2
-//        val newFrag: Fragment? = when (item.itemId) {
-//            R.id.menu_bottom_home -> HomeFragment()
-//            R.id.menu_bottom_search -> SearchFragment()
-//            R.id.menu_bottom_add -> CameraFragment()
-//            R.id.menu_bottom_profile -> ProfileFragment()
-//            else -> null
-//        }
-//
-//        val currFragment = supportFragmentManager.findFragmentById(R.id.main_fragment)
-//
-//        val fragmentTag = newFrag?.javaClass?.simpleName
-//
-//        if (!currFragment?.tag.equals(fragmentTag)) {
-//            currFragment?.let { frag ->
-//                fragmentSavedState.put(
-//                    frag.tag!!,
-//                    supportFragmentManager.saveFragmentInstanceState(frag)
-//                )
-//            }
-//        }
-//
-//        newFrag?.setInitialSavedState(fragmentSavedState[fragmentTag])
-//        newFrag?.let {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_fragment, it, fragmentTag)
-//                .addToBackStack(fragmentTag)
-//                .commit()
-//        }
-
-        //v1
+         //v1
         //trocar o fragment baseado no id
         when(item.itemId) {
             R.id.menu_bottom_home -> {
@@ -196,16 +199,12 @@ SearchFragment.SearchListener {
        homeFragment.presenter.clear()
 
         if (supportFragmentManager.findFragmentByTag(
-            profileFragment.javaClass.simpleName) != null)
+            profileFragment.javaClass.simpleName) != null) {
             profileFragment.presenter.clear()
-              //TODO: profile presenter clear
+        }
 
         //ira chamar a tela principal
        binding.mainBottomNav.selectedItemId = R.id.menu_bottom_home
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        outState.putSerializable("fragmentState", fragmentSavedState)
-//        super.onSaveInstanceState(outState)
-//    }
 }

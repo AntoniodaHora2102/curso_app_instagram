@@ -3,6 +3,7 @@ package co.tiagoaguiar.course.instagram.home.data
 import co.tiagoaguiar.course.instagram.common.base.RequestCallback
 import co.tiagoaguiar.course.instagram.common.model.Post
 import co.tiagoaguiar.course.instagram.common.model.UserAuth
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeRepository (private val dataSourceFactory: HomeDataSourceFactory) {
 
@@ -32,5 +33,10 @@ class HomeRepository (private val dataSourceFactory: HomeDataSourceFactory) {
                 callback.onComplete()
             }
         })
+    }
+
+    //logout
+    fun logout() {
+        dataSourceFactory.createRemoteDataSource().logout()
     }
 }
